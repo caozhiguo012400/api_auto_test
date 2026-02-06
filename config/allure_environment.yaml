@@ -1,0 +1,13 @@
+环境名称: ${current_env}
+基础URL: ${base_url}
+Python版本: "3.9.2"
+Pytest版本: "7.4.3"
+Allure版本: "2.24.0"
+测试框架: "Python + Pytest + Allure"
+执行时间: "${execute_time}"
+执行人员: "${executor}"
+用例总数: "${total_case}"
+通过用例数: "${pass_case}"
+失败用例数: "${fail_case}"
+跳过用例数: "${skip_case}"
+通过率: "${pass_rate}"

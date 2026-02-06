@@ -1,0 +1,38 @@
+# 核心依赖
+pytest==7.3.1                # 测试用例执行核心（稳定版本）
+requests==2.30.0             # 接口请求核心
+allure-pytest==2.13.3        # Allure报告生成（与pytest兼容）
+pyyaml==6.0.1                # 读取/写入YAML配置文件
+pytest-html==4.1.1           # 简易HTML报告（备用）
+pytest-rerunfailures==12.0   # 用例失败重试（提升测试稳定性）
+pytest-xdist==3.3.1          # 多线程执行用例（提升执行效率，支持并发）
+
+# 数据库依赖（按需安装，多数据库可同时安装）
+PyMySQL==1.0.3               # MySQL数据库连接
+cx_Oracle==8.3.0             # Oracle数据库连接
+psycopg2-binary==2.9.9       # PostgreSQL数据库连接
+SQLAlchemy==2.0.23           # 数据库ORM框架（简化数据库操作）
+
+# 加密依赖
+pycryptodome==3.20.0         # 加密解密核心（AES、RSA等）
+pycryptodomex==3.20.0        # 补充加密算法
+cryptography==41.0.7         # 高级加密支持
+
+# 数据处理依赖
+openpyxl==3.1.2              # 读取/写入Excel文件（处理Excel测试数据）
+pandas==2.1.4                # 批量处理测试数据（适合大量数据场景）
+numpy==1.26.3                # 辅助数据处理
+
+# 日志依赖
+loguru==0.7.2                # 日志工具（简洁、强大，替代原生logging）
+
+# 工具类依赖
+python-dotenv==1.0.0         # 环境变量管理（敏感配置加密存储，避免硬编码）
+pathlib==1.0.1               # 路径处理（跨平台，避免路径硬编码问题）
+schedule==1.2.0              # 定时任务（支持定时执行测试用例）
+colorama==0.4.6              # 控制台日志着色（提升可读性）
+
+# 可选依赖（按需安装）
+requests-toolbelt==1.0.0     # 复杂请求支持（如分块上传、表单提交）
+urllib3==1.26.18             # 补充HTTP请求支持（避免版本冲突）
+mock==5.1.0                  # 接口Mock（模拟未开发完成的接口，不阻塞测试）

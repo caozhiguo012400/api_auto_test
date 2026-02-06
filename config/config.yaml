@@ -1,0 +1,49 @@
+# 框架全局配置
+framework:
+  case_dir: "./testcases"          # 测试用例目录
+  report_dir: "./reports"          # 报告根目录
+  allure_result_dir: "./reports/allure-results"  # Allure原始数据目录
+  allure_report_dir: "./reports/allure-report"   # Allure HTML报告目录
+  pytest_html_dir: "./reports/pytest-html-report" # 简易HTML报告目录
+  log_dir: "./logs"                # 日志目录
+  retry_count: 2                   # 用例失败重试次数
+  thread_count: 4                  # 多线程执行用例数量（pytest-xdist）
+  timeout: 15                      # 接口请求超时时间（秒）
+  is_auto_open_report: True        # 执行完成后自动打开Allure报告
+
+# 环境配置（支持多环境切换，可扩展更多环境）
+env:
+  current_env: "test"              # 当前使用环境（test/dev/prod/pre）
+  test:                            # 测试环境
+    base_url: "http://192.168.5.202:8841"
+    proxy: ""                      # 测试环境代理（可选，用于抓包调试）
+  dev:                             # 开发环境
+    base_url: "http://192.168.5.210:8841"
+    proxy: ""
+  prod:                            # 生产环境（谨慎使用，建议只执行只读用例）
+    base_url: "http://125.64.42.116:8841"
+    proxy: ""
+  pre:                             # 预发布环境
+    base_url: "http://192.168.5.202:8841"
+    proxy: ""
+
+# 接口通用配置
+api:
+  common_headers:                  # 所有接口通用请求头
+    Content-Type: "application/json;charset=utf-8"
+    User-Agent: "ApiAutoTest/1.0.0 (Python/Pytest/Allure)"
+    Accept: "*/*"
+  need_token: True                 # 是否需要全局token（如登录后携带token）
+  token_key: "Authorization"       # token在请求头中的key（如Authorization、token）
+  token_prefix: "Bearer "          # token前缀（如Bearer、Token）
+
+# 日志配置（分级、分文件，支持Allure联动）
+log:
+  level: "INFO"                    # 日志级别（DEBUG/INFO/WARNING/ERROR/CRITICAL）
+  file_name: "api_test.log"        # 日志文件名
+  rotation: "10MB"                 # 日志文件分割大小（超过10MB自动分割）
+  retention: 7                     # 日志保留天数（7天，自动清理过期日志）
+  encoding: "utf-8"                # 日志编码
+  is_console_output: True          # 是否在控制台输出日志
+  is_file_output: True             # 是否写入文件日志
+  is_allure_output: True           # 是否将日志写入Allure报告（便于定位失败原因）

@@ -1,0 +1,84 @@
+# 测试数据按业务模块拆分，支持正向/反向用例，可直接在pytest用例中读取
+# 格式：模块名→接口名→用例列表（包含用例ID、描述、请求参数、预期结果）
+
+# 用户模块测试数据
+user:
+  # 登录接口测试数据
+  login:
+    - case_id: login_001
+      case_desc: 正向用例-正确账号密码登录
+      request:
+        method: POST
+        url: /api/user/login
+        json:
+          username: "test_user"
+          password: "123456"  # 实际场景中可使用加密后的密码
+      expected:
+        status_code: 200
+        json_key:
+          code: 0
+          message: "登录成功"
+          data.token: not_null  # 非空校验
+    - case_id: login_002
+      case_desc: 反向用例-错误密码登录
+      request:
+        method: POST
+        url: /api/user/login
+        json:
+          username: "test_user"
+          password: "wrong_password"
+      expected:
+        status_code: 400
+        json_key:
+          code: 1001
+          message: "账号或密码错误"
+  # 用户信息接口测试数据
+  get_user_info:
+    - case_id: get_user_info_001
+      case_desc: 正向用例-登录后查询用户信息
+      request:
+        method: GET
+        url: /api/user/info
+        headers:
+          Authorization: "Bearer ${token}"  # 引用全局token（参数化）
+      expected:
+        status_code: 200
+        json_key:
+          code: 0
+          data.username: "test_user"
+          data.mobile: "13800138000"
+
+# 订单模块测试数据
+order:
+  create_order:
+    - case_id: create_order_001
+      case_desc: 正向用例-创建普通订单
+      request:
+        method: POST
+        url: /api/order/create
+        json:
+          user_id: "${user_id}"  # 引用用户ID（接口依赖参数）
+          goods_id: "1001"
+          count: 1
+          amount: 99.9
+      expected:
+        status_code: 200
+        json_key:
+          code: 0
+          message: "订单创建成功"
+          data.order_id: not_null
+    - case_id: create_order_002
+      case_desc: 反向用例-商品不存在创建订单
+      request:
+        method: POST
+        url: /api/order/create
+        json:
+          user_id: "${user_id}"
+          goods_id: "9999"  # 不存在的商品ID
+          count: 1
+          amount: 99.9
+      expected:
+        status_code: 400
+        json_key:
+          code: 2001
+          message: "商品不存在"
