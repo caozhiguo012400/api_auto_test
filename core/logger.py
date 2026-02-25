@@ -1,24 +1,26 @@
 from loguru import logger
-import os
+from pathlib import Path
 import yaml
-from utils.path_util import get_project_path
-from core.exception_handler import ConfigLoadError
+import os
 
+# log工具类不轻易用其他工具类，容易循环导入
 # 获取项目根路径
-project_path = get_project_path()
+current_file_path = Path(__file__).absolute()
+project_path = current_file_path.parent.parent
+
 # 读取日志配置
 config_path = os.path.join(project_path, "config", "config.yaml")
 try:
     with open(config_path, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f)["log"]
 except Exception as e:
-    raise ConfigLoadError(f"读取日志配置失败：{str(e)}")
+    raise Exception(f"读取日志配置文件失败，请检查配置文件路径和格式：{config_path}")
 
 # 移除loguru默认日志处理器
 logger.remove()
 
 # 日志输出格式（包含时间、级别、模块、函数、行号、日志信息）
-log_format = "{time:YYYY-MM-DD HH:mm:ss.SSS} | {level:<8} | {module}:{function}:{line} | {message}"
+log_format = "{time:YYYY-MM-DD HH:mm:ss.SSS} | {level:<4} | {module}:{function}:{line} | {message}"
 
 # 1. 控制台日志输出（可选，根据配置开关控制）
 if config["is_console_output"]:
@@ -46,18 +48,17 @@ if config["is_file_output"]:
 
 # 3. Allure日志输出（可选，将日志关联到Allure报告）
 if config["is_allure_output"]:
-    from allure_commons.utils import attach_file, md5
-    from allure_commons.types import AttachmentType
+    import allure
 
     def allure_log_sink(msg):
         """将日志写入Allure报告（作为附件）"""
         log_content = msg.record["message"]
         log_level = msg.record["level"].name
         # 按日志级别生成不同的附件（可选，便于筛选）
-        attach_file(
+        allure.attach.file(
             source=log_content.encode("utf-8"),
-            name=f"log_{log_level.lower()}_{md5(log_content)}.txt",
-            attachment_type=AttachmentType.TEXT
+            name=f"log_{log_level.lower()}_{log_content}.txt",
+            attachment_type=allure.attachment_type.TEXT
         )
 
     logger.add(
@@ -68,9 +69,10 @@ if config["is_allure_output"]:
 
 # 导出日志实例，供外部所有模块使用
 log = logger
-if __name__ == '__main__':
-    log.info("info信息")
-    log.debug("debug信息")
-    log.error("error信息")
-    log.warning("warning信息")
-    log.critical("critical严重错误信息")
+
+# if __name__ == '__main__':
+#     log.info("info信息")
+#     log.debug("debug信息")
+#     log.error("error信息")
+#     log.warning("warning信息")
+#     log.critical("critical严重错误信息")
